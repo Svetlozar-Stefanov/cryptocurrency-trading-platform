@@ -12,12 +12,16 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   backend:
-    build: .
+    build: backend
     container_name: cryptocurrency_platform_backend
     ports:
       - "8080:8080"
     depends_on:
       - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
 
 volumes:
   pgdata:
