@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 public class RegisterController {
 
@@ -18,8 +20,9 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequest registerRequest) {
         registerService.register(registerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "User created successfully!"));
     }
 }

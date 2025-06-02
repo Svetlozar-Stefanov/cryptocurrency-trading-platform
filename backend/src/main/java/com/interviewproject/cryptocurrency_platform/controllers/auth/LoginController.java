@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 public class LoginController {
     private final AuthenticationManager authenticationManager;
@@ -30,7 +32,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         Authentication authToken =
                 UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.email(), loginRequest.password());
         try {
@@ -42,9 +44,10 @@ public class LoginController {
             securityContextHolderStrategy.setContext(context);
             securityContextRepository.saveContext(context, request, response);
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(Map.of("message", "Login successful!"));
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Wrong email or password!"));
         }
     }
 }
