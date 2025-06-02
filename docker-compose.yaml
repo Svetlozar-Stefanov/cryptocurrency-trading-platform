@@ -12,7 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   backend:
-    build: backend
+    build: ./backend
     container_name: cryptocurrency_platform_backend
     ports:
       - "8080:8080"
@@ -23,5 +23,12 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
 
+  frontend:
+    build: ./frontend
+    container_name: cryptocurrency_platform_frontend
+    ports:
+     - "5173:5173"
+    depends_on:
+      - backend
 volumes:
   pgdata:
