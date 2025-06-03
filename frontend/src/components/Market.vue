@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import {ref, onMounted, onUnmounted, computed} from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+const auth = useAuthStore()
 
 const tickerData = ref({})
 
@@ -54,6 +57,11 @@ const sortedSymbols = computed(() =>
       return priceB - priceA // descending
     })
 )
+
+function buy(symbol) {
+  alert(`Buying ${symbol}`)
+  // Send API request to create simulated purchase
+}
 </script>
 
 <template>
@@ -72,6 +80,9 @@ const sortedSymbols = computed(() =>
         <td>{{ symbol }}</td>
         <td>{{ nameMap[symbol] || symbol }}</td>
         <td>${{ tickerData[symbol].last }}</td>
+        <td v-if="auth.isLoggedIn">
+          <button @click="buy(symbol)" class="buy-button">Buy</button>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -117,5 +128,18 @@ const sortedSymbols = computed(() =>
 
 .price-table tr:hover {
   background-color: #f0f8ff;
+}
+
+.buy-button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.buy-button:hover {
+  background-color: #0056b3;
 }
 </style>
