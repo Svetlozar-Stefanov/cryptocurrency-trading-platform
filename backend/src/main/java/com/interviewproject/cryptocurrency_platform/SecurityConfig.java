@@ -30,7 +30,7 @@ public class SecurityConfig {
             .cors(cors -> corsConfigurationSource())
             .authorizeHttpRequests((authorize) ->
                     authorize
-                            .requestMatchers("/", "/login", "/register").permitAll()
+                            .requestMatchers("/", "/login", "/register", "/market").permitAll()
                             .anyRequest().authenticated()
             );
 
