@@ -22,11 +22,12 @@ public class RegisterService {
             throw new UserWithEmailAlreadyExistsException(registerRequest.email());
         }
 
-        User user = new User();
-        user.setName(registerRequest.name());
-        user.setEmail(registerRequest.email());
-        user.setPassword(passwordEncoder.encode(registerRequest.password()));
-        user.setRole("USER");
+        User user = new User(
+                registerRequest.name(),
+                registerRequest.email(),
+                passwordEncoder.encode(registerRequest.password()),
+                User.STARTING_BALANCE,
+                "USER");
 
         userRepository.addUser(user);
     }

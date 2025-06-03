@@ -3,22 +3,34 @@ package com.interviewproject.cryptocurrency_platform.models.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
 public class User implements UserDetails {
+    public static final BigDecimal STARTING_BALANCE = new BigDecimal("10000");
+
     private Long id;
     private String name;
     private String email;
     private String password;
+    private BigDecimal balance;
     private String role;
 
     public User() {}
-    public User(Long id, String name, String email, String password, String role) {
+    public User(String name, String email, String password, BigDecimal balance, String role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.balance = balance;
+        this.role = role;
+    }
+    public User(Long id, String name, String email, String password, BigDecimal balance, String role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.balance = balance;
         this.role = role;
     }
 
@@ -72,5 +84,17 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void withdrawFromBalance(BigDecimal amount) {
+        balance = balance.subtract(amount);
+    }
+
+    public void depositToBalance(BigDecimal amount) {
+        balance = balance.add(amount);
     }
 }

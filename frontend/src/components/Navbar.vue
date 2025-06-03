@@ -11,7 +11,13 @@ function logout() {
 
 <template>
   <header class="navbar">
-    <div class="logo">Cryptocurrency Platform</div>
+    <div class="left-section">
+      <div class="logo">Cryptocurrency Platform</div>
+      <router-link class="nav-link" to="/">Home</router-link>
+      <template v-if="auth.isLoggedIn">
+        <router-link class="portfolio-link" to="/portfolio">Portfolio</router-link>
+      </template>
+    </div>
     <div class="auth-section">
       <template v-if="auth.isLoggedIn">
         <span class="welcome">Welcome, {{ auth.currentUser.name }}</span>
@@ -33,6 +39,24 @@ function logout() {
   background-color: #42b983;
   color: white;
   font-size: 1rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.portfolio-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
 }
 
 .logo {

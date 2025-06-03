@@ -31,8 +31,8 @@ public class UserRepository {
     }
 
     public void addUser(User user) {
-        String sql = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getRole());
+        String sql = "INSERT INTO users (name, email, password, balance, role) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getBalance(), user.getRole());
     }
 
     private static class UserRowMapper implements RowMapper<User> {
@@ -43,6 +43,7 @@ public class UserRepository {
                     rs.getString("name"),
                     rs.getString("email"),
                     rs.getString("password"),
+                    rs.getBigDecimal("balance"),
                     rs.getString("role")
             );
         }
