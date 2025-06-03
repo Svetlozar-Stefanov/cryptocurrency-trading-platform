@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import Market from "@/components/Market.vue";
 </script>
 
 <template>
   <div class="main-page">
-    <h1>Main Page</h1>
+    <Market />
   </div>
 </template>
 
