@@ -13,4 +13,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,String>> handleUserWithEmailAlreadyExists(UserWithEmailAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(UserWithThisEmailNotFoundException.class)
+    public ResponseEntity<Map<String,String>> handleUserWithThisEmailNotFound(UserWithThisEmailNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<Map<String,String>> handleInsufficientFunds(InsufficientFundsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+    }
 }

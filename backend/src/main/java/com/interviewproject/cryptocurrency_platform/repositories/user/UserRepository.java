@@ -35,6 +35,11 @@ public class UserRepository {
         jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getBalance(), user.getRole());
     }
 
+    public void updateUserBalance(User user) {
+        String sql = "UPDATE users SET balance = ? WHERE id = ?";
+        jdbcTemplate.update(sql, user.getBalance(), user.getId());
+    }
+
     private static class UserRowMapper implements RowMapper<User> {
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {

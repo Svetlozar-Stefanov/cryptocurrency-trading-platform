@@ -6,3 +6,13 @@ CREATE TABLE users (
        role VARCHAR(50) NOT NULL,
        balance NUMERIC NOT NULL
 );
+
+CREATE TABLE transactions (
+                 id SERIAL PRIMARY KEY,
+                 user_id SERIAL REFERENCES users,
+                 symbol TEXT,
+                 type TEXT CHECK (type IN ('BUY', 'SELL')),
+                 price NUMERIC,
+                 quantity NUMERIC,
+                 timestamp TIMESTAMP
+             )
