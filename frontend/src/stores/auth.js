@@ -6,7 +6,6 @@ export const useAuthStore = defineStore('auth', () => {
     const currentUser = ref(null)
 
     async function checkSession() {
-        console.log('KUR')
         try {
             const res = await fetch('http://localhost:8080/user', {
                 credentials: 'include'

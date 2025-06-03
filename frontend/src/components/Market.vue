@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {ref, onMounted, onUnmounted, computed} from 'vue'
+import {useRouter} from "vue-router";
 import { useAuthStore } from '@/stores/auth'
 
+const router = useRouter();
 const auth = useAuthStore()
 
 const tickerData = ref({})
@@ -59,8 +61,8 @@ const sortedSymbols = computed(() =>
 )
 
 function buy(symbol) {
-  alert(`Buying ${symbol}`)
-  // Send API request to create simulated purchase
+  const price = tickerData.value[symbol].last
+  router.push({ name: 'trade', query: { symbol, price } })
 }
 </script>
 
