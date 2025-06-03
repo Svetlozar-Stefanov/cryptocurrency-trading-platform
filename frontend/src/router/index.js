@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from "@/views/Register.vue";
-import TradeForm from "@/views/TradeForm.vue";
+import BuyForm from "@/views/BuyForm.vue";
 import Portfolio from "@/views/Portfolio.vue";
 
 const router = createRouter({
@@ -24,9 +24,9 @@ const router = createRouter({
       component: Register,
     },
     {
-      path: '/trade',
-      name: 'trade',
-      component: TradeForm,
+      path: '/buy',
+      name: 'buy',
+      component: BuyForm,
     },
     {
       path: '/portfolio',

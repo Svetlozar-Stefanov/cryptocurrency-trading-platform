@@ -1,28 +1,61 @@
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
+
+const user = auth.currentUser
 
 const symbol = ref(route.query.symbol)
 const price = ref(parseFloat(route.query.price))
 
-const amount = ref(0)
-const balance = ref(10000)
+const quantity = ref(0)
+const balance = user.balance
 
-const totalCost = computed(() => amount.value * price.value)
+const totalCost = computed(() => quantity.value * price.value)
 
 function confirmTrade() {
   if (totalCost.value > balance.value) {
     alert('Insufficient balance!')
     return
   }
-  alert(`Purchased ${amount.value} of ${symbol.value} for $${totalCost.value.toFixed(2)}`)
-  balance.value -= totalCost.value
-  amount.value = 0
-  symbol.value = ''
+  alert(`Purchased ${quantity.value} of ${symbol.value} for $${totalCost.value.toFixed(2)}`)
+
+  buy(symbol.value, price.value, quantity.value)
 
   router.push("/")
+}
+
+async function buy(symbol, price, quantity) {
+  try {
+    const response = await fetch('http://localhost:8080/buy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        symbol: symbol,
+        price: price,
+        quantity: quantity
+      }),
+      credentials: 'include'
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Transaction failed:', errorData.error);
+      alert(`Transaction failed: ${errorData.error}`);
+      return;
+    }
+
+    const data = await response.json();
+    console.log('Transaction successful', data.message);
+  } catch (err) {
+    console.error('Network or unexpected error:', err);
+    alert('Login unsuccessful: could not reach server. Please try again later.');
+  }
 }
 
 function cancelTrade() {
@@ -41,8 +74,8 @@ function cancelTrade() {
       </div>
 
       <div class="form-group">
-        <label for="amount">Amount</label>
-        <input id="amount" v-model.number="amount" type="number" min="0.01" step="0.01" required />
+        <label for="amount">Quantity</label>
+        <input id="amount" v-model.number="quantity" type="number" min="0.01" step="0.01" required />
       </div>
 
       <div class="form-info">

@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import Transactions from "@/components/Transactions.vue";
+import {onMounted, watch} from "vue";
+import {useRoute} from "vue-router";
+
+const route = useRoute();
+
 const auth = useAuthStore()
 
-const name = auth.currentUser.name
-const balance = auth.currentUser.balance
+onMounted(fetchData)
+watch(route, fetchData)
+
+function fetchData() {
+  auth.checkSession()
+}
 </script>
 
 <template>
   <div class="portfolio-container">
     <div class="header">
-      <h2>{{ name }},</h2>
-      <p>Balance: ${{ balance }}</p>
+      <h2>{{ auth.currentUser.name }},</h2>
+      <p>Balance: ${{ auth.currentUser.balance }}</p>
     </div>
 
     <div class="section">
@@ -20,9 +30,7 @@ const balance = auth.currentUser.balance
     </div>
 
     <div class="section">
-      <h3>Transaction History</h3>
-      <!-- Transaction content goes here -->
-      <div class="placeholder">No data yet.</div>
+      <Transactions />
     </div>
   </div>
 </template>

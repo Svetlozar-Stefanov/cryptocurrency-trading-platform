@@ -62,7 +62,7 @@ const sortedSymbols = computed(() =>
 
 function buy(symbol) {
   const price = tickerData.value[symbol].last
-  router.push({ name: 'trade', query: { symbol, price } })
+  router.push({ name: 'buy', query: { symbol, price } })
 }
 </script>
 
