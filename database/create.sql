@@ -8,11 +8,19 @@ CREATE TABLE users (
 );
 
 CREATE TABLE transactions (
-                 id SERIAL PRIMARY KEY,
-                 user_id SERIAL REFERENCES users,
-                 symbol TEXT,
-                 type TEXT CHECK (type IN ('BUY', 'SELL')),
-                 price NUMERIC,
-                 quantity NUMERIC,
-                 timestamp TIMESTAMP
-             )
+     id SERIAL PRIMARY KEY,
+     user_id SERIAL REFERENCES users,
+     symbol TEXT,
+     type TEXT CHECK (type IN ('BUY', 'SELL')),
+     price NUMERIC,
+     quantity NUMERIC,
+     timestamp TIMESTAMP
+ );
+
+CREATE TABLE assets (
+    user_id SERIAL,
+    symbol TEXT,
+    quantity NUMERIC,
+    avg_price NUMERIC,
+    PRIMARY KEY (user_id, symbol)
+);
