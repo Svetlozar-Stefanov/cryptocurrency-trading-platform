@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted, computed} from 'vue'
-import {useRouter} from "vue-router";
+import {ref, onMounted, onUnmounted, computed, watch} from 'vue'
+import {useRouter, useRoute} from "vue-router";
 import { useAuthStore } from '@/stores/auth'
 
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
 
 const tickerData = ref({})
@@ -73,6 +74,12 @@ onMounted(async () => {
   ws.onerror = (err) => {
     console.error('WebSocket error:', err)
   }
+
+  function fetchData() {
+    auth.checkSession()
+  }
+  onMounted(fetchData)
+  watch(() => route.fullPath, fetchData)
 })
 
 onUnmounted(() => {
@@ -81,14 +88,14 @@ onUnmounted(() => {
 
 const sortedSymbols = computed(() =>
     Object.keys(tickerData.value).sort((a, b) => {
-      const priceA = parseFloat(tickerData.value[a]?.last || 0)
-      const priceB = parseFloat(tickerData.value[b]?.last || 0)
+      const priceA = parseFloat(currentPrices.value[a] || 0)
+      const priceB = parseFloat(currentPrices.value[b] || 0)
       return priceB - priceA // descending
     })
 )
 
 function buy(symbol) {
-  const price = tickerData.value[symbol].last
+  const price = currentPrices.value[symbol]
   router.push({ name: 'buy', query: { symbol, price } })
 }
 </script>
