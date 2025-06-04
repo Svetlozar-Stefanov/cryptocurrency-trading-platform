@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import Register from "@/views/Register.vue";
 import BuyForm from "@/views/BuyForm.vue";
 import Portfolio from "@/views/Portfolio.vue";
+import SellForm from "@/views/SellForm.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,11 @@ const router = createRouter({
       path: '/buy',
       name: 'buy',
       component: BuyForm,
+    },
+    {
+      path: '/sell',
+      name: 'sell',
+      component: SellForm,
     },
     {
       path: '/portfolio',

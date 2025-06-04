@@ -3,6 +3,7 @@ package com.interviewproject.cryptocurrency_platform.controllers.trade;
 import com.interviewproject.cryptocurrency_platform.exceptions.UserWithThisEmailNotFoundException;
 import com.interviewproject.cryptocurrency_platform.models.trade.Asset;
 import com.interviewproject.cryptocurrency_platform.models.trade.BuyRequest;
+import com.interviewproject.cryptocurrency_platform.models.trade.SellRequest;
 import com.interviewproject.cryptocurrency_platform.models.trade.Transaction;
 import com.interviewproject.cryptocurrency_platform.models.user.User;
 import com.interviewproject.cryptocurrency_platform.repositories.trade.AssetRepository;
@@ -65,6 +66,19 @@ public class TradeController {
         }
 
         tradeService.buy(user, buyRequest);
+        return ResponseEntity.ok().body(Map.of("message", "Transaction successful"));
+    }
+
+    @PostMapping("/sell")
+    public ResponseEntity<Map<String, String>> sell(@AuthenticationPrincipal UserDetails userDetails,
+                                                   @RequestBody SellRequest sellRequest){
+        User user = userRepository.getUserByEmail(userDetails.getUsername());
+
+        if (user == null) {
+            throw new UserWithThisEmailNotFoundException(userDetails.getUsername());
+        }
+
+        tradeService.sell(user, sellRequest);
         return ResponseEntity.ok().body(Map.of("message", "Transaction successful"));
     }
 }

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import {ref, onMounted, computed} from 'vue'
+import {ref, onMounted, watch} from 'vue'
+
+const props = defineProps({ refreshKey: Number })
 
 const transactions = ref([])
 
-onMounted(async () => {
+async function fetchData() {
   try {
     const response = await fetch('http://localhost:8080/transactions', {
       credentials: 'include',
@@ -13,7 +15,10 @@ onMounted(async () => {
   } catch (err) {
     console.error('Error loading transactions:', err)
   }
-})
+}
+
+onMounted(fetchData)
+watch(() => props.refreshKey, fetchData)
 </script>
 
 <template>

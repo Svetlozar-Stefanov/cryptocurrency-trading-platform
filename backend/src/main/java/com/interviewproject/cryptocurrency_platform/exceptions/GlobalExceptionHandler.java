@@ -23,4 +23,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,String>> handleInsufficientFunds(InsufficientFundsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(NotEnoughQuantityException.class)
+    public ResponseEntity<Map<String,String>> handleNotEnoughQuantity(NotEnoughQuantityException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
+    }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
@@ -10,27 +10,28 @@ const user = auth.currentUser
 
 const symbol = ref(route.query.symbol)
 const price = ref(parseFloat(route.query.price))
+const max_quantities = ref(parseFloat(route.query.max_quantities))
 
 const quantity = ref(0)
 const balance = user.balance
 
-const totalCost = computed(() => quantity.value * price.value)
+const totalProfit = computed(() => quantity.value * price.value)
 
 async function confirmTrade() {
-  if (totalCost.value > balance.value) {
-    alert('Insufficient balance!')
+  if (quantity.value > max_quantities.value) {
+    alert('Not enough number of assets!')
     return
   }
-  alert(`Purchased ${quantity.value} of ${symbol.value} for $${totalCost.value.toFixed(2)}`)
+  alert(`Sold ${quantity.value} of ${symbol.value} for $${totalProfit.value.toFixed(2)}`)
 
-  await buy(symbol.value, price.value, quantity.value)
+  await sell(symbol.value, price.value, quantity.value)
 
-  await router.push("/")
+  await router.push("/portfolio")
 }
 
-async function buy(symbol, price, quantity) {
+async function sell(symbol, price, quantity) {
   try {
-    const response = await fetch('http://localhost:8080/buy', {
+    const response = await fetch('http://localhost:8080/sell', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,14 +60,14 @@ async function buy(symbol, price, quantity) {
 }
 
 function cancelTrade() {
-  router.push("/")
+  router.push("/portfolio")
 }
 </script>
 
 <template>
   <div class="trade-container">
     <form class="trade-form" @submit.prevent="confirmTrade">
-      <h2>Buy Cryptocurrency</h2>
+      <h2>Sell Cryptocurrency</h2>
 
       <div class="form-group">
         <label>Symbol</label>
@@ -74,6 +75,7 @@ function cancelTrade() {
       </div>
 
       <div class="form-group">
+        <p><strong>Available to Trade:</strong> {{ max_quantities }}</p>
         <label for="amount">Quantity</label>
         <input id="amount" v-model.number="quantity" type="number" min="0.01" step="0.01" required />
       </div>
@@ -81,7 +83,7 @@ function cancelTrade() {
       <div class="form-info">
         <p><strong>Balance:</strong> ${{ balance.toFixed(2) }}</p>
         <p><strong>Current Price:</strong> ${{ price }}</p>
-        <p><strong>Final Cost:</strong> ${{ totalCost.toFixed(2) }}</p>
+        <p><strong>Earnings:</strong> ${{ totalProfit.toFixed(2) }}</p>
       </div>
 
       <div class="form-actions">

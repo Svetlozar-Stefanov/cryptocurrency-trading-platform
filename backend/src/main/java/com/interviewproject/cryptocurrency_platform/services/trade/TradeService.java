@@ -1,8 +1,10 @@
 package com.interviewproject.cryptocurrency_platform.services.trade;
 
 import com.interviewproject.cryptocurrency_platform.exceptions.InsufficientFundsException;
+import com.interviewproject.cryptocurrency_platform.exceptions.NotEnoughQuantityException;
 import com.interviewproject.cryptocurrency_platform.models.trade.Asset;
 import com.interviewproject.cryptocurrency_platform.models.trade.BuyRequest;
+import com.interviewproject.cryptocurrency_platform.models.trade.SellRequest;
 import com.interviewproject.cryptocurrency_platform.models.trade.Transaction;
 import com.interviewproject.cryptocurrency_platform.models.user.User;
 import com.interviewproject.cryptocurrency_platform.repositories.trade.AssetRepository;
@@ -68,6 +70,31 @@ public class TradeService {
             transactionRepository.addTransaction(user, newTransaction);
         } else {
             throw new InsufficientFundsException("");
+        }
+    }
+
+    public void sell(User user, SellRequest sellRequest) {
+        Asset asset = assetRepository.getAsset(user.getId(), sellRequest.symbol());
+
+        if (asset.getQuantity().compareTo(sellRequest.quantity()) >= 0) {
+            asset.subtractQuantity(sellRequest.quantity());
+            assetRepository.updateAsset(asset);
+
+            BigDecimal finalProfit = sellRequest.price().multiply(sellRequest.quantity());
+            user.depositToBalance(finalProfit);
+            userRepository.updateUserBalance(user);
+
+            Transaction newTransaction = new Transaction(
+                    user.getId(),
+                    sellRequest.symbol(),
+                    "SELL",
+                    sellRequest.price(),
+                    sellRequest.quantity(),
+                    Timestamp.from(Instant.now())
+            );
+            transactionRepository.addTransaction(user, newTransaction);
+        } else {
+            throw new NotEnoughQuantityException("");
         }
     }
 }
