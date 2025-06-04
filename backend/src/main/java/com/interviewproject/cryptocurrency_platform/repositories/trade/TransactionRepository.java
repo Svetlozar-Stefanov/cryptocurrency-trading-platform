@@ -30,6 +30,11 @@ public class TransactionRepository {
         return jdbcTemplate.query(sql, new TransactionRowMapper(), user_id);
     }
 
+    public void dropTransactions(Long user_id) {
+        String sql = "DELETE FROM transactions WHERE user_id = ?";
+        jdbcTemplate.update(sql, user_id);
+    }
+
     private static class TransactionRowMapper implements RowMapper<Transaction> {
         @Override
         public Transaction mapRow(ResultSet rs, int rowNum) throws SQLException {

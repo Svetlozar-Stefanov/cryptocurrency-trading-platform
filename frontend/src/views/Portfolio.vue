@@ -17,6 +17,19 @@ function fetchData() {
   auth.checkSession()
   refreshKey.value++
 }
+
+const resetPortfolio = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/reset', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Reset failed');
+    location.reload();
+  } catch (err) {
+    console.error('Reset error:', err);
+  }
+};
 </script>
 
 <template>
@@ -24,6 +37,7 @@ function fetchData() {
     <div class="header">
       <h2>{{ auth.currentUser.name }},</h2>
       <p>Balance: ${{ auth.currentUser.balance }}</p>
+      <button @click="resetPortfolio" class="reset-button">Reset Portfolio</button>
     </div>
 
     <div class="section">
@@ -37,6 +51,16 @@ function fetchData() {
 </template>
 
 <style scoped>
+.reset-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .portfolio-container {
   max-width: 800px;
   margin: 40px auto;

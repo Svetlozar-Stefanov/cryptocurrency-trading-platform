@@ -97,4 +97,8 @@ public class User implements UserDetails {
     public void depositToBalance(BigDecimal amount) {
         balance = balance.add(amount);
     }
+
+    public void reset() {
+        balance = STARTING_BALANCE;
+    }
 }

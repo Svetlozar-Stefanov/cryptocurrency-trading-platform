@@ -35,6 +35,12 @@ const nameMap = {
 let ws = null
 
 onMounted(async () => {
+  for (const symbol of Object.keys(nameMap)) {
+    tickerData.value[symbol] = {
+      symbol: symbol
+    }
+  }
+
   try {
     for (const symbol of Object.keys(nameMap)) {
       const formattedSymbol = symbol.replace("/", "")
@@ -44,16 +50,10 @@ onMounted(async () => {
       if (!response.ok) throw new Error('Failed to fetch initial prices')
 
       const data = await response.json()
-      console.log(data)
-      console.log(data.result)
       if (data.result != null) {
         const key = Object.keys(data.result)[0]
 
         currentPrices.value[symbol] = data.result[key].c[0]
-        tickerData.value[symbol] = {
-          symbol: symbol,
-          last: currentPrices.value[symbol]
-        }
       }
     }
   } catch (err) {

@@ -45,6 +45,11 @@ public class AssetRepository {
         jdbcTemplate.update(sql, asset.getQuantity(), asset.getAvg_price(), asset.getUserId(), asset.getSymbol());
     }
 
+    public void dropAssets(Long user_id) {
+        String sql = "DELETE FROM assets WHERE user_id = ?";
+        jdbcTemplate.update(sql, user_id);
+    }
+
     private static class AssetRowMapper implements RowMapper<Asset> {
         @Override
         public Asset mapRow(ResultSet rs, int rowNum) throws SQLException {
