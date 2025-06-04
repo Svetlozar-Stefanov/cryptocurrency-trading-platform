@@ -7,6 +7,7 @@ const router = useRouter();
 const auth = useAuthStore()
 
 const tickerData = ref({})
+const currentPrices = ref({})
 
 const nameMap = {
   'XBT/USD': 'Bitcoin',
@@ -33,13 +34,39 @@ const nameMap = {
 
 let ws = null
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    for (const symbol of Object.keys(nameMap)) {
+      const formattedSymbol = symbol.replace("/", "")
+      console.log(formattedSymbol)
+
+      const response = await fetch(`https://api.kraken.com/0/public/Ticker?pair=${formattedSymbol}`)
+      if (!response.ok) throw new Error('Failed to fetch initial prices')
+
+      const data = await response.json()
+      console.log(data)
+      console.log(data.result)
+      if (data.result != null) {
+        const key = Object.keys(data.result)[0]
+
+        currentPrices.value[symbol] = data.result[key].c[0]
+        tickerData.value[symbol] = {
+          symbol: symbol,
+          last: currentPrices.value[symbol]
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error loading assets:', err)
+  }
+
   ws = new WebSocket('http://localhost:8080/market')
 
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data)
     for (const entry of data) {
       tickerData.value[entry.symbol] = entry
+      currentPrices.value[entry.symbol] = entry.last
     }
   }
 
@@ -69,6 +96,7 @@ function buy(symbol) {
 <template>
   <div class="container">
     <h1 class="header">Live Crypto Prices</h1>
+    <div class="table-scroll">
     <table class="price-table">
       <thead>
       <tr>
@@ -79,15 +107,22 @@ function buy(symbol) {
       </thead>
       <tbody>
       <tr v-for="symbol in sortedSymbols" :key="symbol">
-        <td>{{ symbol }}</td>
-        <td>{{ nameMap[symbol] || symbol }}</td>
-        <td>${{ tickerData[symbol].last }}</td>
-        <td v-if="auth.isLoggedIn">
-          <button @click="buy(symbol)" class="buy-button">Buy</button>
-        </td>
+
+          <td>{{ symbol }}</td>
+          <td>{{ nameMap[symbol] || symbol }}</td>
+          <td>
+            <span v-if="currentPrices[symbol]">
+              ${{ currentPrices[symbol] }}
+            </span>
+            <span v-else>Loading...</span>
+          </td>
+          <td v-if="auth.isLoggedIn">
+            <button @click="buy(symbol)" class="buy-button">Buy</button>
+          </td>
       </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
@@ -130,6 +165,13 @@ function buy(symbol) {
 
 .price-table tr:hover {
   background-color: #f0f8ff;
+}
+
+.table-scroll {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .buy-button {
